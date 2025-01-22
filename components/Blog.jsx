@@ -5,8 +5,7 @@ const Blog = () => {
 
   const freeForm = {
     title: '',
-    content: '',
-    tags: ''
+    content: ''
   }
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -45,18 +44,12 @@ const Blog = () => {
 
   const handleAddPosts = (e) => {
     e.preventDefault();
-    const postsArray = formPosts.tags.split(',').map(item => item.trim());
 
-    const newPosts = {
-      title: formPosts.title,
-      content: formPosts.content,
-      image: formPosts.image,
-      tags: postsArray
-    };
+    const newPosts = { ...formPosts };
 
     axios.post(`${apiUrl}/routerposts`, newPosts)
       .then(res => {
-        fetchPosts();
+        setPosts(res.data)
         setFormPosts(freeForm)
       })
   }
@@ -88,10 +81,6 @@ const Blog = () => {
               <label htmlFor="content" className="form-label">Descrizione del post</label>
               <textarea className="form-control" id="content" rows="3" placeholder='Descrivi il tuo post...' onChange={handleInputChange}></textarea>
             </div>
-            <div className="mb-3">
-              <label htmlFor="tags">Tags post</label>
-              <input id='tags' type="text" name='tags' className='form-control' placeholder='Tags del post' onChange={handleInputChange} />
-            </div>
             <div className="mb-3 mt-4">
               <button className="btn btn-primary" type='submit' onClick={handleAddPosts}>Aggiungi post</button>
             </div>
@@ -106,7 +95,6 @@ const Blog = () => {
             <div className="card-body">
               <h4 className='card-title'>{post.title}</h4>
               <p className="card-text">{post.content}</p>
-              <span className='card-text'><strong>Tags:</strong> {post.tags}</span>
             </div>
             <div className="btn btn-danger d-block mb-4 mx-3 col-3" onClick={() => handleDeletePosts(post.id)}><i className="fa-solid fa-trash-can"></i> Elimina</div>
           </div>
