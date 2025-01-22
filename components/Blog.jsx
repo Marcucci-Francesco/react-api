@@ -3,13 +3,20 @@ import { useEffect, useState } from 'react';
 
 const Blog = () => {
 
+  const freeForm = {
+    title: '',
+    content: '',
+    tags: ''
+  }
+
   const apiUrl = import.meta.env.VITE_API_URL;
   const [posts, setPosts] = useState([]);
+  const [formPosts, setFormPosts] = useState(freeForm);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPosts((prevPosts) => ({
-      ...prevPosts,
+    setPosts((prevFormPosts) => ({
+      ...prevFormPosts,
       [name]: value
     }))
   }
@@ -17,6 +24,8 @@ const Blog = () => {
   const fetchPosts = () => {
     axios.get(`${apiUrl}/routerposts`)
       .then(res => {
+        console.log(res.data);
+
         setPosts(res.data)
       })
       .catch(error => {
@@ -31,6 +40,24 @@ const Blog = () => {
       })
       .catch(error => {
         console.error('Errore', error)
+      })
+  }
+
+  const handleAddPosts = (e) => {
+    e.preventDefault();
+    const postsArray = formPosts.tags.split(',').map(item => item.trim());
+
+    const newPosts = {
+      title: formPosts.title,
+      content: formPosts.content,
+      image: formPosts.image,
+      tags: postsArray
+    };
+
+    axios.post(`${apiUrl}/routerposts`, newPosts)
+      .then(res => {
+        fetchPosts();
+        setFormPosts(freeForm)
       })
   }
 
@@ -51,7 +78,7 @@ const Blog = () => {
           <form>
             <div className="mb-3">
               <label htmlFor="name">Titolo post</label>
-              <input id='name' type="text" name='name' className='form-control' placeholder='Titolo del post...' onChange={handleInputChange} />
+              <input id='title' type="text" name='title' className='form-control' placeholder='Titolo del post...' onChange={handleInputChange} />
             </div>
             <div className="mb-3">
               <label htmlFor="image">URL immagine</label>
@@ -66,7 +93,7 @@ const Blog = () => {
               <input id='tags' type="text" name='tags' className='form-control' placeholder='Tags del post' onChange={handleInputChange} />
             </div>
             <div className="mb-3 mt-4">
-              <button className="btn btn-primary" type='submit'>Aggiungi post</button>
+              <button className="btn btn-primary" type='submit' onClick={handleAddPosts}>Aggiungi post</button>
             </div>
           </form>
         </div>
@@ -79,7 +106,7 @@ const Blog = () => {
             <div className="card-body">
               <h4 className='card-title'>{post.title}</h4>
               <p className="card-text">{post.content}</p>
-              <span className='card-text'>{post.tags}</span>
+              <span className='card-text'><strong>Tags:</strong> {post.tags}</span>
             </div>
             <div className="btn btn-danger d-block mb-4 mx-3 col-3" onClick={() => handleDeletePosts(post.id)}><i className="fa-solid fa-trash-can"></i> Elimina</div>
           </div>
