@@ -8,7 +8,7 @@ const Blog = () => {
     content: ''
   }
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = 'http://localhost:3000';
   const [posts, setPosts] = useState([]);
   const [formPosts, setFormPosts] = useState(freeForm);
 
@@ -49,7 +49,7 @@ const Blog = () => {
 
     axios.post(`${apiUrl}/routerposts`, newPosts)
       .then(res => {
-        setPosts(res.data)
+        setPosts(res.data, ...posts)
         setFormPosts(freeForm)
       })
   }
@@ -90,7 +90,7 @@ const Blog = () => {
 
       <div className="row">
         {posts.map(post => (
-          <div className="card my-5 col-6 mx-4" key={post.id}>
+          <div className="card my-5 col-6 mx-4 pt-4" key={post.id}>
             <img src={post.image} alt="" />
             <div className="card-body">
               <h4 className='card-title'>{post.title}</h4>
