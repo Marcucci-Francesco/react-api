@@ -14,7 +14,7 @@ const Blog = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPosts((prevFormPosts) => ({
+    setFormPosts((prevFormPosts) => ({
       ...prevFormPosts,
       [name]: value
     }))
@@ -49,7 +49,10 @@ const Blog = () => {
 
     axios.post(`${apiUrl}/routerposts`, newPosts)
       .then(res => {
-        setPosts(res.data, ...posts)
+        console.log(res.data);
+
+        setPosts([res.data, ...posts])
+
         setFormPosts(freeForm)
       })
   }
